@@ -144,3 +144,115 @@ function tinhTienDienTheoKW(soKw) {
 
     return tongTien;
 }
+
+
+
+
+
+/**
+ * Bai 3 : Tinh Thue Thu Nhap Ca Nhan
+ * 
+ * Inputs:
+ * tenKH, tongThuNhapNam, soNguoiPhuThuoc
+ * 
+ * Process:
+ * Function:
+ *   B1: Lấy giá trị từ form
+ *   B2: Kiểm tra tenKH không đươc phép rỗng
+ *   B3: Lập công thức tính thuNhapChiuThue
+ *     + thuNhapChiuThue = tongThuNhapNam - 4tr - (soNguoiPhuThuoc * 1.6tr)
+ * 
+ *   B4: Lập công thức tính thuế thu nhập cá nhân theo mức thuế suất quy định
+ *   B5: thông báo kết quả
+ * 
+ * Outputs:
+ * tongTienThue
+ */
+
+// Số tiền giảm trừ cá nhân 4tr
+const SO_TIEN_GIAM_TRU_CA_NHAN = 4;
+
+// Số tiền giảm trừ gia cảnh 1.6/nguoi
+const SO_TIEN_GIAM_TRU_GIA_CANH = 1.6;
+
+// Bảng Thuế suất theo mức thu nhập
+const THUE_SUAT_0_60_TRIEU = 0.05;
+const THUE_SUAT_TREN_60_120_TRIEU = 0.1;
+const THUE_SUAT_TREN_120_210_TRIEU = 0.15;
+const THUE_SUAT_TRÊN_210_384_TRIEU = 0.2;
+const THUE_SUAT_TRÊN_384_624_TRIEU = 0.25;
+const THUE_SUAT_TRÊN_624_960_TRIEU = 0.3;
+const THUE_SUAT_TRÊN_960_TRIEU = 0.35;
+
+function mainTinhThueThuNhap() {
+    let tongTienThue = thuNhapChiuThue = 0;
+    let tenKH = document.getElementById('hoTenKH').value;
+    let tongThuNhapNam = document.getElementById('tongThuNhapNam').value;
+    let soNguoiPhuThuoc = document.getElementById('soNguoiPhuThuoc').value;
+
+    // Kiem tra ten KH
+    if (tenKH === '') {
+        alert("Vui lòng nhập tên KH");
+    } else if (tongThuNhapNam == '' || tongThuNhapNam < 0) {
+        alert("Vui lòng nhập tổng thu nhập năm");
+    } else if (soNguoiPhuThuoc == '' || soNguoiPhuThuoc < 0) {
+        alert("Vui lòng nhập số người phụ thuộc");
+    } else {
+        // Tinh thu nhập chịu thuế
+        thuNhapChiuThue =  tinhThuNhapChiuThue(tongThuNhapNam, soNguoiPhuThuoc);
+
+        // Tính tổng tiền thuế phải trả
+        tongTienThue = tinhTongTienThueThuNhap(thuNhapChiuThue);
+
+        if (tongTienThue > 0) {
+            tongTienThue = Math.floor(tongTienThue * 1000000);
+        }
+
+        // Su dung ${} cua ES6 de binding du lieu
+        let txtResult = document.getElementById('txtResultTinhThueThuNhapCaNhan');
+        txtResult.innerHTML = `<br /> Tên KH : ${tenKH} 
+            <br /> Số tiền thuế thu nhập cá nhân phải trả : ${tongTienThue.toLocaleString('vi-VN', {style:"currency", currency:"VND"})}
+        `;
+    }
+}
+// Goi ham mainTinhThueThuNhap khi click button 'btnTinhThueThuNhapCaNhan'
+document.getElementById('btnTinhThueThuNhapCaNhan').onclick = mainTinhThueThuNhap;
+
+// Ham tinh thu nhap chiu thue
+function tinhThuNhapChiuThue(tongThuNhapNam, soNguoiPhuThuoc) {
+    let thuNhapChiuThue = tongThuNhapNam - SO_TIEN_GIAM_TRU_CA_NHAN - (soNguoiPhuThuoc * SO_TIEN_GIAM_TRU_GIA_CANH);
+
+    if (thuNhapChiuThue < 0) {
+        return 0;
+    }
+
+    return thuNhapChiuThue;
+}
+
+// Ham tinh tong tien thue phai trả
+function tinhTongTienThueThuNhap(thuNhapChiuThue) {
+    if (0 < thuNhapChiuThue && thuNhapChiuThue <= 60) {
+        console.log('Bậc 1');
+        return thuNhapChiuThue * THUE_SUAT_0_60_TRIEU;
+    } else if (60 < thuNhapChiuThue && thuNhapChiuThue <= 120) {
+        console.log('Bậc 2');
+        return (60 * THUE_SUAT_0_60_TRIEU) + (thuNhapChiuThue - 60) * THUE_SUAT_TREN_60_120_TRIEU;
+    } else if (120 < thuNhapChiuThue && thuNhapChiuThue <= 210) {
+        console.log('Bậc 3');
+        return (60 * THUE_SUAT_0_60_TRIEU) + ((120 - 60) * THUE_SUAT_TREN_60_120_TRIEU) + (thuNhapChiuThue - 120) * THUE_SUAT_TREN_120_210_TRIEU;
+    } else if (210 < thuNhapChiuThue && thuNhapChiuThue <= 384) {
+        console.log('Bậc 4');
+        return (60 * THUE_SUAT_0_60_TRIEU) + ((120 - 60) * THUE_SUAT_TREN_60_120_TRIEU) + ((210 - 120) * THUE_SUAT_TREN_120_210_TRIEU) + (thuNhapChiuThue - 210) * THUE_SUAT_TRÊN_210_384_TRIEU;
+    } else if (384 < thuNhapChiuThue && thuNhapChiuThue <= 624) {
+        console.log('Bậc 5');
+        return (60 * THUE_SUAT_0_60_TRIEU) + ((120 - 60) * THUE_SUAT_TREN_60_120_TRIEU) + ((210 - 120) * THUE_SUAT_TREN_120_210_TRIEU) + ((384 - 210) * THUE_SUAT_TRÊN_210_384_TRIEU) + (thuNhapChiuThue - 384) * THUE_SUAT_TRÊN_384_624_TRIEU;
+    } else if (624 < thuNhapChiuThue && thuNhapChiuThue <= 960) {
+        console.log('Bậc 6');
+        return (60 * THUE_SUAT_0_60_TRIEU) + ((120 - 60) * THUE_SUAT_TREN_60_120_TRIEU) + ((210 - 120) * THUE_SUAT_TREN_120_210_TRIEU) + ((384 - 210) * THUE_SUAT_TRÊN_210_384_TRIEU) + ((624 - 384) * THUE_SUAT_TRÊN_384_624_TRIEU) + (thuNhapChiuThue - 624) * THUE_SUAT_TRÊN_624_960_TRIEU;
+    } else if (960 < thuNhapChiuThue) {
+        console.log('Bậc 7');
+        return (60 * THUE_SUAT_0_60_TRIEU) + ((120 - 60) * THUE_SUAT_TREN_60_120_TRIEU) + ((210 - 120) * THUE_SUAT_TREN_120_210_TRIEU) + ((384 - 210) * THUE_SUAT_TRÊN_210_384_TRIEU) + ((624 - 384) * THUE_SUAT_TRÊN_384_624_TRIEU) + ((960 - 624) * THUE_SUAT_TRÊN_624_960_TRIEU) + (thuNhapChiuThue - 960) * THUE_SUAT_TRÊN_624_960_TRIEU;
+    } else {
+        return 0;
+    }
+}

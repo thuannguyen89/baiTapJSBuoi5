@@ -115,6 +115,33 @@
             </div>
 
             <div class="tab-pane fade" id="pills-bt3" role="tabpanel" aria-labelledby="pills-bt3-tab">
+                <h4>Bài Tập 3 : Tính Thuế Thu Nhập Cá Nhân</h4>
+                <p>Viết chương trình nhập vào thông tin của 1 cá nhân:
+                    <br /> + Họ Tên
+                    <br /> + Tổng thu nhập năm
+                    <br /> + Số người phụ thuộc
+                </p>
+                <p>Tính và xuất thuế thu nhập cá nhân phải trả ra màn hình theo quy định sau : </p>
+                <p class="text-danger">Thu nhập chịu thuế = Tổng thu nhập năm - 4tr - Số người phụ thuộc * 1.6tr</p>
+                <div class="row">
+                    <form>
+                        <div class="form-group">
+                            <label for="">Họ Tên KH</label>
+                            <input type="text" class="form-control" id="hoTenKH" placeholder="Nhập họ tên KH">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Tổng Thu Nhập Năm (Đơn vị tr/vnđ)</label>
+                            <input type="number" class="form-control" id="tongThuNhapNam" placeholder="Nhập tổng thu nhập năm">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Số Người Phụ Thuộc</label>
+                            <input type="number" class="form-control" id="soNguoiPhuThuoc" placeholder="Nhập số người phụ thuộc">
+                        </div>
+
+                        <button type="button" class="btn btn-primary" id="btnTinhThueThuNhapCaNhan">Tính Thuế Thu Nhập Cá Nhân</button>
+                        <p class="alert alert-info txtResult" id="txtResultTinhThueThuNhapCaNhan"></p>
+                    </form>
+                </div>
             </div>
 
             <div class="tab-pane fade" id="pills-bt4" role="tabpanel" aria-labelledby="pills-bt4-tab">
