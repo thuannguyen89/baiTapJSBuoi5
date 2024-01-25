@@ -108,7 +108,7 @@ function mainTinhTienDien() {
         alert("Vui lòng nhập số Kw");
     } else {
         // Tinh tiền điện
-        tienDien =  tinhTienDienTheoKW(soKw);
+        tienDien = tinhTienDienTheoKW(soKw);
 
         // Su dung ${} cua ES6 de binding du lieu
         let txtResult = document.getElementById('txtResultTinhTienDien');
@@ -132,10 +132,10 @@ function tinhTienDienTheoKW(soKw) {
     } else if (100 < soKw && soKw <= 200) {
         console.log("Bậc 3");
         tongTien = (50 * KW_50_DAU) + (50 * KW_50_KE) + (soKw - 100) * KW_100_KE;
-    } else if (200 < soKw && soKw <= 350 ) {
+    } else if (200 < soKw && soKw <= 350) {
         console.log("Bậc 4");
         tongTien = (50 * KW_50_DAU) + (50 * KW_50_KE) + (100 * KW_100_KE) + (soKw - 200) * KW_150_KE;
-    } else if (soKw > 350 ) {
+    } else if (soKw > 350) {
         console.log("Bậc 5");
         tongTien = (50 * KW_50_DAU) + (50 * KW_50_KE) + (100 * KW_100_KE) + (150 * KW_150_KE) + (soKw - 350) * KW_CON_LAI;
     } else {
@@ -199,7 +199,7 @@ function mainTinhThueThuNhap() {
         alert("Vui lòng nhập số người phụ thuộc");
     } else {
         // Tinh thu nhập chịu thuế
-        thuNhapChiuThue =  tinhThuNhapChiuThue(tongThuNhapNam, soNguoiPhuThuoc);
+        thuNhapChiuThue = tinhThuNhapChiuThue(tongThuNhapNam, soNguoiPhuThuoc);
 
         // Tính tổng tiền thuế phải trả
         tongTienThue = tinhTongTienThueThuNhap(thuNhapChiuThue);
@@ -255,4 +255,123 @@ function tinhTongTienThueThuNhap(thuNhapChiuThue) {
     } else {
         return 0;
     }
+}
+
+
+
+
+
+
+
+
+/**
+ * Bai 4 : Tinh Tien Cap
+ * 
+ * Inputs:
+ * maKH, loaiKH, soKetNoi, soKenhCaoCap
+ * 
+ * Process:
+ * Function:
+ *   B1: Lấy giá trị từ form
+ *   B2: Kiểm tra loaiKH không đươc phép rỗng
+ *     + Nếu loaiKH là doanh nghiệp thì hiển thị ô nhập soKetNoi
+ *     + Ngược lại thì ẩn ô nhập soKetNoi
+ *   B3: Lập công thức tính tongTienCap
+ *     + tongTienCap = phiXuLyHoaDon + (phiDichVuCoBan * soKetNoi) + (phiThueKenhCaoCap * soKenhCaoCap)
+ * 
+ *   B4: thông báo kết quả
+ * 
+ * Outputs:
+ * tongTienCap
+ */
+
+
+// Giá quy đổi 1 USD qua VND
+const GIA_QUY_DOI_USD_VNĐ = 23500;
+
+// Gia tri cua loai KH
+const KHACH_HANG_NHA_DAN = '1';
+const KHACH_HANG_DOANH_NGHIEP = '2';
+
+// Bảng phí cước đơn vị $
+const PHI_XU_LY_HOA_DON_NHA_DAN = 4.5;
+const PHI_DICH_VU_CO_BAN_NHA_DAN = 20.5;
+const PHI_KENH_CAO_CAP_NHA_DAN = 7.5;
+
+const PHI_XU_LY_HOA_DON_DOANH_NGHIEP = 15;
+const PHI_DICH_VU_CO_BAN_DOANH_NGHIEP = 7.5; // 75$ cho 10 kênh
+const PHI_KENH_CAO_CAP_DOANH_NGHIEP = 50;
+const PHI_MOI_KET_NOI_THEM_DOANH_NGHIEP = 5;
+
+
+function mainTinhTienCap() {
+    let tongTienCap = 0;
+    let maKH = document.getElementById('maKH').value;
+    let loaiKH = document.getElementById('loaiKH').value;
+    let soKetNoi = document.getElementById('soKetNoi').value;
+    let soKenhCaoCap = document.getElementById('soKenhCaoCap').value;
+
+    // Kiem tra ma KH
+    if (maKH === '') {
+        alert("Vui lòng nhập ma KH");
+    } else if (soKenhCaoCap < 1) {
+        alert("Vui lòng nhập số kênh cao cấp");
+    } else {
+        // Tính tổng tiền thuế phải trả
+        switch (loaiKH) {
+            case KHACH_HANG_NHA_DAN:
+                // Tinh tổng tièn cáp
+                tongTienCap = tinhTongTienCap(
+                    PHI_XU_LY_HOA_DON_NHA_DAN,
+                    PHI_DICH_VU_CO_BAN_NHA_DAN,
+                    PHI_KENH_CAO_CAP_NHA_DAN,
+                    1,
+                    soKenhCaoCap
+                );
+                break;
+
+            case KHACH_HANG_DOANH_NGHIEP:
+                // Tinh tổng tièn cáp
+                tongTienCap = tinhTongTienCap(
+                    PHI_XU_LY_HOA_DON_DOANH_NGHIEP,
+                    PHI_DICH_VU_CO_BAN_DOANH_NGHIEP,
+                    PHI_KENH_CAO_CAP_DOANH_NGHIEP,
+                    (soKetNoi > 10) ? 10 : soKetNoi,
+                    soKenhCaoCap
+                );
+
+                // Nếu số kết nối của doanh nghiệp > 10 số.
+                if (soKetNoi > 10) {
+                    tongTienCap += tinhPhiMoiKetNoiThem(soKetNoi - 10);
+                }
+                break;
+        }
+
+        // Quy dổi USD qua VND
+        // if (tongTienCap > 0) {
+        //     tongTienCap = Math.floor(tongTienCap * GIA_QUY_DOI_USD_VNĐ);
+        // }
+
+        // Su dung ${} cua ES6 de binding du lieu
+        let txtResult = document.getElementById('txtResultTinhTienCap');
+        txtResult.innerHTML = `<br /> Mã KH : ${maKH}
+            <br /> Loại : ${loaiKH}
+            <br /> Số kết nối : ${soKetNoi}
+            <br /> Số kệnh cao cấp : ${soKenhCaoCap}
+            <br /> Tổng tiền cáp phải trả : ${tongTienCap.toLocaleString('en-US', {style:"currency", currency:"USD"})}
+        `;
+        // <br /> Tổng tiền cáp phải trả : ${tongTienCap.toLocaleString('vi-VN', {style:"currency", currency:"VND"})}
+    }
+}
+// Goi ham mainTinhTienCap khi click button 'btnTinhTienCap'
+document.getElementById('btnTinhTienCap').onclick = mainTinhTienCap;
+
+// phiXuLyHoaDon + (phiDichVuCoBan * soKetNoi) + (phiThueKenhCaoCap * soKenhCaoCap)
+function tinhTongTienCap(phiXuLyHoaDon, phiDichVuCoBan, phiThueKenhCaoCap, soKetNoi, soKenhCaoCap) {
+    return phiXuLyHoaDon + (phiDichVuCoBan * soKetNoi) + (phiThueKenhCaoCap * soKenhCaoCap);
+}
+
+// Tinh phí mỗi kết nối thêm
+function tinhPhiMoiKetNoiThem(soKetNoiThem) {
+    return soKetNoiThem * PHI_MOI_KET_NOI_THEM_DOANH_NGHIEP;
 }
