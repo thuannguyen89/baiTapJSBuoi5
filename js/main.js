@@ -356,7 +356,7 @@ function mainTinhTienCap() {
         let txtResult = document.getElementById('txtResultTinhTienCap');
         txtResult.innerHTML = `<br /> Mã KH : ${maKH}
             <br /> Loại : ${loaiKH}
-            <br /> Số kết nối : ${soKetNoi}
+            <br /> Số kết nối : ${soKetNoi ?? 1}
             <br /> Số kệnh cao cấp : ${soKenhCaoCap}
             <br /> Tổng tiền cáp phải trả : ${tongTienCap.toLocaleString('en-US', {style:"currency", currency:"USD"})}
         `;
@@ -374,4 +374,17 @@ function tinhTongTienCap(phiXuLyHoaDon, phiDichVuCoBan, phiThueKenhCaoCap, soKet
 // Tinh phí mỗi kết nối thêm
 function tinhPhiMoiKetNoiThem(soKetNoiThem) {
     return soKetNoiThem * PHI_MOI_KET_NOI_THEM_DOANH_NGHIEP;
+}
+
+// Kiem tra de on/off ô nhap soKetNoi khi có thay đổi ở ô chọn loaiKH
+document.getElementById("loaiKH").onchange = function(e) {
+    let loaiKH = e.target.value;
+    let formSoKetNoi = document.querySelector(".form-group-soKetNoi");
+
+    // Hiện ô soKetNoi nếu chọn KH Doanh Nghiệp, ngược lại ẩn
+    if (loaiKH == KHACH_HANG_DOANH_NGHIEP) {
+        formSoKetNoi.classList.remove("d-none");
+    } else {
+        formSoKetNoi.classList.add("d-none");
+    }
 }
